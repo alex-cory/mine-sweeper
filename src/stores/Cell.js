@@ -48,7 +48,7 @@ export default class Cell {
   @action.bound
   flag(e) {
     e.preventDefault()
-    if (!this.isVisible && this.game.remainingMines > 0) {
+    if ((!this.isVisible && this.game.remainingMines > 0) || this.isFlagged) {
       this.isFlagged = !this.isFlagged
     }
     if (this.game.allMinesFlagged && this.game.allCellsVisible) {
