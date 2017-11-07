@@ -4,6 +4,7 @@ import Score from './Score'
 import Controls from './Controls'
 import Timer from './Timer'
 import MineField from './MineField'
+import Difficulty from './Difficulty';
 
 
 export const MineSweeper = () => (
@@ -12,17 +13,19 @@ export const MineSweeper = () => (
     <Controls />
     <Timer />
     <MineField />
+    <Difficulty />
   </Game>
 )
 
 const Game = styled.div`
   display: grid;
-  grid-template-columns: 15% 70% 15%;
-  grid-template-rows: 30px 1fr;
+  grid-template-columns: 17% 66% 17%;
+  grid-template-rows: 30px 1fr 30px;
   grid-template-areas:
     'score       controls       timer'
-    'mine-field mine-field mine-field';
+    'mine-field mine-field mine-field'
+    '.......... difficulty ..........';
   justify-items: center;
-  height: 400px;
+  height: 460px;
   width: 400px;
 `

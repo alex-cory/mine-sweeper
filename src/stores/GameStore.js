@@ -4,10 +4,10 @@ import Cell from './Cell'
 
 
 class GameStore {
-  mines = 20
+  @observable mines = 10
   @observable cells = []
   @observable status = 'playing' // 'playing', 'won', 'lost'
-  @observable rows = 13
+  @observable rows = 8
   @observable time = 0
   @computed get remainingMines() {
     const cells = flatten(this.cells)
@@ -25,7 +25,7 @@ class GameStore {
   }
   @computed get firstMoveMade() {
     const cells = flatten(this.cells)
-    return count(cells, cell => cell.isVisible) > 0
+    return count(cells, cell => cell.isVisible || cell.isFlagged) > 0
   }
 
   constructor() {
@@ -36,14 +36,7 @@ class GameStore {
         if (this.status === 'lost') {
           alert('Try again!')
           this.startNewGame()
-        }
-      },
-      { delay: 20 }
-    )
-    reaction(
-      () => this.allMinesFlagged && this.allCellsVisible,
-      () => {
-        if (this.allMinesFlagged && this.allCellsVisible) {
+        } else if (this.status === 'won') {
           alert('Congradulations! You won!')
           this.startNewGame()
         }
@@ -52,11 +45,20 @@ class GameStore {
     )
     reaction(
       () => this.firstMoveMade,
-      () => this.firstMoveMade && this.startTimer()
+      () => {
+        if (this.firstMoveMade) {
+          this.startTimer()
+        }
+      }
     )
-    // when increasing or decreasing rows, start a new game
+    // when increasing or decreasing rows or difficulty, start a new game
     reaction(
       () => this.rows,
+      () => this.startNewGame()
+    )
+    // when increasing or decreasing the difficulty, start a new game
+    reaction(
+      () => this.mines,
       () => this.startNewGame()
     )
   }
@@ -73,10 +75,11 @@ class GameStore {
   }
 
   startNewGame() {
-    if (this.timer) this.resetTimer()
-
+    this.status = 'playing'
+    if (this.timer) {
+      this.resetTimer()
+    }
     const minePositions = this.generateMinePositions()
-
     this.cells = Array.from({ length: this.rows }, (_, y) => (
       Array.from({ length: this.rows }, (_, x) => {
         const position = minePositions[`${[y, x]}`]
@@ -84,31 +87,27 @@ class GameStore {
         return new Cell(this, x, y, isMine)
       })
     ))
-
-    this.status = 'playing'
   }
 
   generateMinePositions() {
+    const point = () => Math.floor(Math.random() * this.rows)
     return Array.from({ length: this.mines })
       .reduce(acc => {
-        let position = this.generateYX()
+        let position = [point(), point()]
         while (acc[`${position}`]) {
-          position = this.generateYX()
+          position = [point(), point()]
         }
         acc[`${position}`] = position
         return acc
       }, {})
   }
 
-  generateYX() {
-    const point = () => Math.floor(Math.random() * this.rows)
-    return [point(), point()]
-  }
-
   displayMines() {
     const cells = flatten(this.cells)
     for (const cell of cells) {
-      if (cell.isMine) cell.isVisible = true
+      if (cell.isMine) {
+        cell.isVisible = true
+      }
     }
   }
 }

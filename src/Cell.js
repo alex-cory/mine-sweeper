@@ -47,6 +47,7 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   margin: 1px;
+  cursor: pointer;
 `
 
 const colors = {

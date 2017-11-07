@@ -1,16 +1,18 @@
 import React from 'react'
 import styled from 'styled-components'
 import { observer, inject } from 'mobx-react'
-import { PlusIcon, MinusIcon } from 'components'
+import { PlusIcon, MinusIcon, SadFaceIcon, SmileyFaceIcon } from 'components'
 
 
 const Controls = observer(({ game }) => (
   <Row>
-    <PlusIcon onClick={() => game.rows++} />
-    Mine Sweeper
     <MinusIcon onClick={() => game.rows--} />
+    <Face onClick={() => game.startNewGame()} sad={game.status === 'lost'} />
+    <PlusIcon onClick={() => game.rows++} />
   </Row>
 ))
+
+const Face = ({ sad, ...props }) => sad ? <SadFaceIcon {...props} /> : <SmileyFaceIcon {...props} />
 
 const Row = styled.div`
   grid-area: controls;
@@ -25,6 +27,8 @@ const Row = styled.div`
   padding: 4px;
   font-family: helvetica;
   font-size: 14px;
+  margin-bottom: 1px;
+  user-select: none;
 `
 
 export default inject('game')(Controls)

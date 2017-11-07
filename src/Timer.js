@@ -5,7 +5,7 @@ import { observer, inject } from 'mobx-react'
 
 const Timer = observer(({ game: { time } }) => (
   <Seconds>
-    {time}
+    Time: {time}
   </Seconds>
 ))
 
@@ -13,6 +13,7 @@ const Seconds = styled.div`
   grid-area: timer;
   display: grid;
   align-items: center;
+  user-select: none;
 `
 
 export default inject('game')(Timer)

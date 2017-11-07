@@ -17,7 +17,6 @@ const Field = styled.div`
   grid-area: mine-field;
   display: flex;
   flex-flow: row wrap;
-  border: 1px solid transparent;
   width: 100%;
 `
 

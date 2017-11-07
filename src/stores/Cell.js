@@ -10,13 +10,12 @@ export default class Cell {
   @observable isFlagged = false
   @observable isMine = false
   @observable isClickedMine = false
-  @computed get value () { // 'mine', 0-8
-    if (this.isMine) return 'mine'
+  @computed get value () { // '💣', 0-8
+    if (this.isMine) return '💣'
     return count(this.neighbors, cell => cell.isMine)
   }
   @computed get neighbors() {
     const surroundingCellPositions = Object.values({
-      // currentPosition: [0, 0]
       topLeft: [-1, -1],
       top: [-1, 0],
       topRight: [-1, 1],
@@ -39,8 +38,7 @@ export default class Cell {
     when(
       () => this.isVisible,
       () => {
-        if (this.value === 0 && !this.isMine) {
-        // if (this.visible) {
+        if (this.value === 0) {
           this.fillNeighbors()
         }
       }
@@ -53,6 +51,9 @@ export default class Cell {
     if (!this.isVisible && this.game.remainingMines > 0) {
       this.isFlagged = !this.isFlagged
     }
+    if (this.game.allMinesFlagged && this.game.allCellsVisible) {
+      this.game.status = 'won'
+    }
   }
 
   @action.bound
@@ -64,12 +65,14 @@ export default class Cell {
       this.game.displayMines()
       this.game.status = 'lost'
     }
+    if (this.game.allMinesFlagged && this.game.allCellsVisible) {
+      this.game.status = 'won'
+    }
   }
 
   fillNeighbors() {
     for (var neighbor of this.neighbors) {
       if (!neighbor.isVisible) {
-      // if (!neighbor.visible && neighbor.value !== 'mine') {
         neighbor.isVisible = true
       }
     }
@@ -79,7 +82,8 @@ export default class Cell {
     const y = this.y + relativeY
     const x = this.x + relativeX
     const outOfBounds = point => point >= this.game.rows || point < 0
-    if (outOfBounds(y) || outOfBounds(x)) return null
-    return this.game.cells[y][x]
+    if (!outOfBounds(y) && !outOfBounds(x)) {
+      return this.game.cells[y][x]
+    }
   }
 }
