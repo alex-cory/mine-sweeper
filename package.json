@@ -2,7 +2,7 @@
   "name": "mine-sweeper",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://myusername.github.io/mine-sweeper",
+  "homepage": "https://alex-cory.github.io/mine-sweeper",
   "devDependencies": {
     "babel-plugin-styled-components": "^1.3.0",
     "babel-plugin-transform-decorators-legacy": "^1.3.4"
