@@ -6,9 +6,9 @@ import { PlusIcon, MinusIcon } from 'components'
 
 const Difficulty = observer(({ game }) => (
   <Row>
-    <MinusIcon onClick={() => game.mines--} />
+    <MinusIcon onClick={game.decrementMines} />
     Mines
-    <PlusIcon onClick={() => game.mines++} />
+    <PlusIcon onClick={game.incrementMines} />
   </Row>
 ))
 

@@ -1,4 +1,4 @@
-import { observable, computed, reaction } from 'mobx'
+import { observable, computed, reaction, action } from 'mobx'
 import { count, flatten } from 'utils'
 import Cell from './Cell'
 
@@ -62,7 +62,6 @@ class GameStore {
       () => this.startNewGame()
     )
   }
-
   startTimer() {
     this.timer = setInterval(() => {
       this.time += 1
@@ -110,6 +109,35 @@ class GameStore {
       }
     }
   }
+
+  @action.bound
+  incrementMines() {
+    if (this.mines + 1 < flatten(this.cells).length) {
+      this.mines++
+    } else {
+      alert("You have to at least have one cell that's not a mine silly!")
+    }
+  }
+
+  @action.bound
+  decrementMines() {
+    if (this.mines > 1) {
+      this.mines--
+    } else {
+      alert("You have to have at least 1 mine silly!")
+    }
+  }
+
+  @action.bound
+  decrementRow() {
+    const nextCellCount = Math.pow(this.rows - 1, 2)
+    if (this.mines < nextCellCount) {
+      this.rows--
+    } else {
+      alert("You can't have more mines than cells silly!")
+    }
+  }
+
 }
 
 const game = window.game = new GameStore()

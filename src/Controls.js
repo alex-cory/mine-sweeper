@@ -6,7 +6,7 @@ import { PlusIcon, MinusIcon, SadFaceIcon, SmileyFaceIcon } from 'components'
 
 const Controls = observer(({ game }) => (
   <Row>
-    <MinusIcon onClick={() => game.rows--} />
+    <MinusIcon onClick={game.decrementRow} />
     <Face onClick={() => game.startNewGame()} sad={game.status === 'lost'} />
     <PlusIcon onClick={() => game.rows++} />
   </Row>
