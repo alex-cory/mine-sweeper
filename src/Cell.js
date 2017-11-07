@@ -30,10 +30,10 @@ const Container = styled.div`
     width: calc(${100/rows}% - 2px);
     height: calc(${100/rows}% - 2px);
     background: rgba(${
-      isClickedMine ? '250, 110, 130, .65'
-      : isVisible || isFlagged ? '250, 250, 250, .65'
-      : '0, 0, 0, .65'
-    });
+      isClickedMine ? '250, 110, 130'
+      : isVisible || isFlagged ? '250, 250, 250'
+      : '0, 0, 0'
+    }, .65);
     ${isIncorrectlyFlagged && css`
       &:before {
         content: '✕';
