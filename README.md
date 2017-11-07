@@ -1,4 +1,6 @@
 ### Mine Sweeper
 #### Bult using `styled-components`, `mobx`, and `react`
 
-![alt text](/public/screenshot.jpg "Title")
+Play with it [here](https://alex-cory.github.io/mine-sweeper/)!
+
+![Alt text](./public/screenshot.png)
