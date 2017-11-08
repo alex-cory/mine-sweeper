@@ -85,6 +85,5 @@ export default class Cell {
     if (!outOfBounds(y) && !outOfBounds(x)) {
       return this.game.cells[y][x]
     }
-    return null
   }
 }
