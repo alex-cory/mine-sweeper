@@ -53,15 +53,11 @@ class GameStore {
     )
     // when increasing or decreasing rows or difficulty, start a new game
     reaction(
-      () => this.rows,
-      () => this.startNewGame()
-    )
-    // when increasing or decreasing the difficulty, start a new game
-    reaction(
-      () => this.mines,
+      () => this.rows + this.mines,
       () => this.startNewGame()
     )
   }
+
   startTimer() {
     this.timer = setInterval(() => {
       this.time += 1
@@ -73,6 +69,7 @@ class GameStore {
     this.time = 0
   }
 
+  @action.bound
   startNewGame() {
     this.status = 'playing'
     if (this.timer) {
@@ -81,8 +78,8 @@ class GameStore {
     const minePositions = this.generateMinePositions()
     this.cells = Array.from({ length: this.rows }, (_, y) => (
       Array.from({ length: this.rows }, (_, x) => {
-        const position = minePositions[`${[y, x]}`]
-        const isMine = Array.isArray(position)
+        const position = [y, x]
+        const isMine = Array.isArray(minePositions[position])
         return new Cell(this, x, y, isMine)
       })
     ))
@@ -90,15 +87,14 @@ class GameStore {
 
   generateMinePositions() {
     const point = () => Math.floor(Math.random() * this.rows)
-    return Array.from({ length: this.mines })
-      .reduce(acc => {
-        let position = [point(), point()]
-        while (acc[`${position}`]) {
-          position = [point(), point()]
-        }
-        acc[`${position}`] = position
-        return acc
-      }, {})
+    let minePositions = {}
+    while (Object.keys(minePositions).length < this.mines) {
+      const position = [point(), point()]
+      if (!minePositions[position]) {
+        minePositions[position] = position
+      }
+    }
+    return minePositions
   }
 
   displayMines() {
@@ -112,7 +108,8 @@ class GameStore {
 
   @action.bound
   incrementMines() {
-    if (this.mines + 1 < flatten(this.cells).length) {
+    const lessMinesThanCells = this.mines + 1 < flatten(this.cells).length
+    if (lessMinesThanCells) {
       this.mines++
     } else {
       alert("You have to at least have one cell that's not a mine silly!")
@@ -129,7 +126,7 @@ class GameStore {
   }
 
   @action.bound
-  decrementRow() {
+  decrementRows() {
     const nextCellCount = Math.pow(this.rows - 1, 2)
     if (this.mines < nextCellCount) {
       this.rows--

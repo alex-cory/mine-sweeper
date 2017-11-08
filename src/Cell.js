@@ -25,7 +25,6 @@ const Cell = observer(({ cell: { reveal, flag, game, isMine, isVisible, isFlagge
 ))
 
 const Container = styled.div`
-  grid-area: cell;
   ${({ rows, isVisible, isFlagged, isIncorrectlyFlagged, isClickedMine }) => css`
     width: ${(400/rows) - 2}px;
     height: ${(400/rows) - 2}px;
