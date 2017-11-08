@@ -37,7 +37,7 @@ class GameStore {
           alert('Try again!')
           this.startNewGame()
         } else if (this.status === 'won') {
-          alert('Congradulations! You won!')
+          alert('Congratulations! You won!')
           this.startNewGame()
         }
       },
@@ -132,6 +132,14 @@ class GameStore {
       this.rows--
     } else {
       alert("You can't have more mines than cells silly!")
+    }
+  }
+
+  @action.bound
+  incrementRows() {
+    const maxRows = 24
+    if (this.rows < maxRows) {
+      this.rows++
     }
   }
 

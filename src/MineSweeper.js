@@ -28,4 +28,9 @@ const Game = styled.div`
   justify-items: center;
   height: 460px;
   width: 400px;
+  @media(max-width: 500px) {
+    grid-template-columns: 22% 56% 22%;
+    height: 360px;
+    width: 300px;
+  }
 `

@@ -3,11 +3,11 @@ import { observer, inject } from 'mobx-react'
 import { PlusIcon, MinusIcon, SadFaceIcon, SmileyFaceIcon, ControlBox } from 'components'
 
 
-const Controls = observer(({ game }) => (
+const Controls = observer(({ game: { status, startNewGame, incrementRows, decrementRows } }) => (
   <Container>
-    <MinusIcon onClick={game.decrementRows} />
-    <Face onClick={game.startNewGame} sad={game.status === 'lost'} />
-    <PlusIcon onClick={() => game.rows++} />
+    <MinusIcon onClick={decrementRows} />
+    <Face onClick={startNewGame} sad={status === 'lost'} />
+    <PlusIcon onClick={incrementRows} />
   </Container>
 ))
 

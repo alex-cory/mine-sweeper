@@ -28,6 +28,10 @@ const Container = styled.div`
   ${({ rows, isVisible, isFlagged, isIncorrectlyFlagged, isClickedMine }) => css`
     width: ${(400/rows) - 2}px;
     height: ${(400/rows) - 2}px;
+    @media(max-width: 500px) {
+      width: ${(300/rows) - 2}px;
+      height: ${(300/rows) - 2}px;
+    }
     background: rgba(${
       isClickedMine ? '250, 110, 130'
       : isVisible || isFlagged ? '250, 250, 250'
