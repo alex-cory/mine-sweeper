@@ -7,10 +7,10 @@ import { Page } from 'components'
 
 
 render(
-  <Page>
-    <MobxProvider game={game}>
+  <MobxProvider game={game}>
+    <Page>
       <MineSweeper />
-    </MobxProvider>
-  </Page>,
+    </Page>
+  </MobxProvider>,
   document.getElementById('root')
 )
