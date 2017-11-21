@@ -1,13 +1,12 @@
 import React from 'react'
 import { observer, inject } from 'mobx-react'
 import styled from 'styled-components'
-import { flatten } from 'utils'
 import Cell from './Cell'
 
 
 const MineField = observer(({ game: { cells } }) => (
   <Field>
-    {flatten(cells).map((cell, i) => (
+    {cells.map((cell, i) => (
       <Cell cell={cell} key={i} />
     ))}
   </Field>

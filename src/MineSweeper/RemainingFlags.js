@@ -3,17 +3,17 @@ import styled from 'styled-components'
 import { observer, inject } from 'mobx-react'
 
 
-const Score = observer(({ game }) => (
+const RemainingFlags = observer(({ game }) => (
   <Container>
-    Mines: {game.remainingMines}
+    Mines: {game.remainingFlags}
   </Container>
 ))
 
 const Container = styled.div`
-  grid-area: score;
+  grid-area: remaining-flags;
   display: grid;
   align-items: center;
   user-select: none;
 `
 
-export default inject('game')(Score)
+export default inject('game')(RemainingFlags)

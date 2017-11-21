@@ -32,7 +32,7 @@
     "fs-extra": "3.0.1",
     "gh-pages": "^1.0.0",
     "html-webpack-plugin": "2.29.0",
-    "jest": "20.0.4",
+    "jest": "^21.2.1",
     "lodash": "^4.17.4",
     "mobx": "^3.3.1",
     "mobx-react": "^4.3.3",
@@ -73,6 +73,7 @@
     ],
     "testMatch": [
       "<rootDir>/src/**/__tests__/**/*.js?(x)",
+      "<rootDir>/src/**/__tests__/*.js?(x)",
       "<rootDir>/src/**/?(*.)(spec|test).js?(x)"
     ],
     "testEnvironment": "node",
@@ -86,7 +87,12 @@
       "[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$"
     ],
     "moduleNameMapper": {
-      "^react-native$": "react-native-web"
+      "^react-native$": "react-native-web",
+      "utils": "<rootDir>/src/utils",
+      "components": "<rootDir>/src/components"
+    },
+    "globals": {
+      "window": true
     },
     "moduleFileExtensions": [
       "web.js",

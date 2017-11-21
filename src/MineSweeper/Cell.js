@@ -8,7 +8,7 @@ const Cell = observer(({ cell: { reveal, flag, game, isMine, isVisible, isFlagge
   <Container
     onClick={reveal}
     onContextMenu={flag}
-    rows={game.rows}
+    rows={game.rowCount}
     isVisible={isVisible}
     isFlagged={isFlagged}
     isIncorrectlyFlagged={isFlagged && !isMine && game.status === 'lost'}
@@ -51,6 +51,7 @@ const Container = styled.div`
   justify-content: center;
   margin: 1px;
   cursor: pointer;
+  user-select: none;
 `
 
 const colors = {

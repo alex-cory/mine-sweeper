@@ -1,4 +1,4 @@
-import { observable, computed, action, when } from 'mobx'
+import { observable, computed, action, when, reaction } from 'mobx'
 import { count } from 'utils'
 
 
@@ -43,16 +43,26 @@ export default class Cell {
         }
       }
     )
+    reaction(
+      () => this.isFlagged || this.isVisible,
+      () => {
+        const allCellsVisible = this.game.cells.filter(cell => !cell.isMine).every(cell => cell.isVisible)
+        if (allCellsVisible && this.game.remainingFlags === 0) {
+          this.game.status = 'won'
+        }
+        if (this.game.time === 0) {
+          this.game.startTimer()
+        }
+      }
+    )
   }
 
   @action.bound
   flag(e) {
     e.preventDefault()
-    if ((!this.isVisible && this.game.remainingMines > 0) || this.isFlagged) {
+    if ((!this.isVisible && this.game.remainingFlags > 0) || this.isFlagged) {
       this.isFlagged = !this.isFlagged
-    }
-    if (this.game.allMinesFlagged && this.game.allCellsVisible) {
-      this.game.status = 'won'
+      this.game.cellsFlagged += this.isFlagged ? 1 : -1
     }
   }
 
@@ -65,25 +75,20 @@ export default class Cell {
       this.game.displayMines()
       this.game.status = 'lost'
     }
-    if (this.game.allMinesFlagged && this.game.allCellsVisible) {
-      this.game.status = 'won'
-    }
   }
 
   fillNeighbors() {
     for (var neighbor of this.neighbors) {
-      if (!neighbor.isVisible) {
-        neighbor.isVisible = true
-      }
+      if (!neighbor.isVisible) neighbor.isVisible = true
     }
   }
 
   cellAt([ relativeY, relativeX ]) {
     const y = this.y + relativeY
     const x = this.x + relativeX
-    const outOfBounds = point => point >= this.game.rows || point < 0
+    const outOfBounds = point => point >= this.game.rowCount || point < 0
     if (!outOfBounds(y) && !outOfBounds(x)) {
-      return this.game.cells[y][x]
+      return this.game.cellGrid[y][x]
     }
   }
 }

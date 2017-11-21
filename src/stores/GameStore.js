@@ -1,31 +1,18 @@
 import { observable, computed, reaction, action } from 'mobx'
-import { count, flatten } from 'utils'
+import { flatten } from 'utils'
 import Cell from './Cell'
 
 
-class GameStore {
-  @observable mines = 10
-  @observable cells = []
-  @observable status = 'playing' // 'playing', 'won', 'lost'
-  @observable rows = 8
+export class GameStore {
+  @observable mineCount = 10
+  @observable rowCount = 8
   @observable time = 0
-  @computed get remainingMines() {
-    const cells = flatten(this.cells)
-    const cellsFlagged = count(cells, cell => cell.isFlagged)
-    return this.mines - cellsFlagged
-  }
-  @computed get allMinesFlagged() {
-    const mines = flatten(this.cells).filter(cell => cell.isMine)
-    return mines.every(mine => mine.isFlagged)
-  }
-  @computed get allCellsVisible() {
-    return flatten(this.cells)
-      .filter(cell => !cell.isMine)
-      .every(cell => cell.isVisible)
-  }
-  @computed get firstMoveMade() {
-    const cells = flatten(this.cells)
-    return count(cells, cell => cell.isVisible || cell.isFlagged) > 0
+  @observable cellsFlagged = 0
+  @observable cellGrid = [[]]
+  @observable cells = []
+  @observable status = 'playing' // or won or lost
+  @computed get remainingFlags() {
+    return this.mineCount - this.cellsFlagged
   }
 
   constructor() {
@@ -33,32 +20,22 @@ class GameStore {
     reaction(
       () => this.status,
       () => {
-        if (this.status === 'lost') {
-          alert('Try again!')
-          this.startNewGame()
-        } else if (this.status === 'won') {
-          alert('Congratulations! You won!')
-          this.startNewGame()
-        }
+        if (this.status === 'playing') return
+        const message = this.status === 'lost' ? 'Try Again!' : 'Congratulations! You won!'
+        alert(message)
+        this.startNewGame()
       },
       { delay: 20 }
     )
+    // when increasing or decreasing rowCount or difficulty, start a new game
     reaction(
-      () => this.firstMoveMade,
-      () => {
-        if (this.firstMoveMade) {
-          this.startTimer()
-        }
-      }
-    )
-    // when increasing or decreasing rows or difficulty, start a new game
-    reaction(
-      () => this.rows + this.mines,
+      () => this.rowCount + this.mineCount,
       () => this.startNewGame()
     )
   }
 
   startTimer() {
+    this.time = 1
     this.timer = setInterval(() => {
       this.time += 1
     }, 1000);
@@ -71,24 +48,24 @@ class GameStore {
 
   @action.bound
   startNewGame() {
+    if (this.timer) this.resetTimer()
     this.status = 'playing'
-    if (this.timer) {
-      this.resetTimer()
-    }
+    this.cellsFlagged = 0
     const minePositions = this.generateMinePositions()
-    this.cells = Array.from({ length: this.rows }, (_, y) => (
-      Array.from({ length: this.rows }, (_, x) => {
+    this.cellGrid = Array.from({ length: this.rowCount }, (_, y) => (
+      Array.from({ length: this.rowCount }, (_, x) => {
         const position = [y, x]
         const isMine = Array.isArray(minePositions[position])
         return new Cell(this, x, y, isMine)
       })
     ))
+    this.cells = flatten(this.cellGrid)
   }
 
   generateMinePositions() {
-    const point = () => Math.floor(Math.random() * this.rows)
+    const point = () => Math.floor(Math.random() * this.rowCount)
     let minePositions = {}
-    while (Object.keys(minePositions).length < this.mines) {
+    while (Object.keys(minePositions).length < this.mineCount) {
       const position = [point(), point()]
       if (!minePositions[position]) {
         minePositions[position] = position
@@ -98,19 +75,16 @@ class GameStore {
   }
 
   displayMines() {
-    const cells = flatten(this.cells)
-    for (const cell of cells) {
-      if (cell.isMine) {
-        cell.isVisible = true
-      }
+    for (const cell of this.cells) {
+      if (cell.isMine) cell.isVisible = true
     }
   }
 
   @action.bound
   incrementMines() {
-    const lessMinesThanCells = this.mines + 1 < flatten(this.cells).length
+    const lessMinesThanCells = this.mineCount + 1 < this.cells.length
     if (lessMinesThanCells) {
-      this.mines++
+      this.mineCount++
     } else {
       alert("You have to at least have one cell that's not a mine silly!")
     }
@@ -118,8 +92,8 @@ class GameStore {
 
   @action.bound
   decrementMines() {
-    if (this.mines > 1) {
-      this.mines--
+    if (this.mineCount > 1) {
+      this.mineCount--
     } else {
       alert("You have to have at least 1 mine silly!")
     }
@@ -127,9 +101,9 @@ class GameStore {
 
   @action.bound
   decrementRows() {
-    const nextCellCount = Math.pow(this.rows - 1, 2)
-    if (this.mines < nextCellCount) {
-      this.rows--
+    const nextCellCount = Math.pow(this.rowCount - 1, 2)
+    if (this.mineCount < nextCellCount) {
+      this.rowCount--
     } else {
       alert("You can't have more mines than cells silly!")
     }
@@ -138,11 +112,10 @@ class GameStore {
   @action.bound
   incrementRows() {
     const maxRows = 24
-    if (this.rows < maxRows) {
-      this.rows++
+    if (this.rowCount < maxRows) {
+      this.rowCount++
     }
   }
-
 }
 
 const game = window.game = new GameStore()
